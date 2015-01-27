@@ -51,10 +51,10 @@ namespace Parasite
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            var spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Create a new SpriteBatch, which can be used to draw textures. 
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
            
-            // Load Textures
+            // Load Textures Using Content Manager
             _northOpenWall = Content.Load<Texture2D>("north-open");
             _northClosedWall = Content.Load<Texture2D>("north-closed");
             _eastOpenWall = Content.Load<Texture2D>("east-open");
@@ -112,13 +112,21 @@ namespace Parasite
 
             _spriteBatch.Begin();
 
-            // Draw the floor
+            // Drawing the floor
             _spriteBatch.Draw(_floorTexture, center - new Vector2(_floorTexture.Width / 2, _floorTexture.Height / 2), Color.White);
 
-            var roomHalfWidth = _northClosedWall.Width / 2.0f;
             var wallDepth = _northClosedWall.Height;
+            var roomHalfWidth = _northClosedWall.Width / 2.0f;
             var roomHalfHeight = _eastClosedWall.Height / 2.0f; 
 
+            // Drawing walls depending of player's room index
+            _spriteBatch.Draw(room.NorthRoom != -1 ? _northOpenWall : _northClosedWall, new Vector2(center.X - roomHalfWidth, center.Y - roomHalfHeight));
+            _spriteBatch.Draw(room.SouthRoom != -1 ? _southOpenWall : _southClosedWall, new Vector2(center.X - roomHalfWidth, center.Y + roomHalfHeight - wallDepth));
+
+            _spriteBatch.Draw(room.EastRoom != -1 ? _eastOpenWall : _eastClosedWall, new Vector2(center.X + roomHalfWidth - wallDepth, center.Y - roomHalfHeight));
+            _spriteBatch.Draw(room.WestRoom != -1 ? _westOpenWall : _westClosedWall, new Vector2(center.X - roomHalfWidth, center.Y - roomHalfHeight));
+
+            _spriteBatch.End();
         }
     }
 }
