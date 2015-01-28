@@ -98,7 +98,7 @@ namespace Parasite
         }
 
         /// <summary>
-        /// Map the player movement across the map using the rooms.
+        /// Map the player movement across the map using the rooms and set designated room.
         /// </summary>
         /// 
         public void MovePlayerNorth(OnPlayerMoved callback)

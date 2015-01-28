@@ -10,9 +10,14 @@ namespace Parasite
     public class Game1 : Game
     {
         private Map _map;
+
         GraphicsDeviceManager graphics;
         SpriteBatch _spriteBatch;
-    
+
+        // Device Scaling Variables
+        private readonly Rectangle _screenBounds;
+        private readonly Matrix _screenForm;
+
         // Textures
         private Texture2D _northOpenWall;
         private Texture2D _northClosedWall;
@@ -25,12 +30,20 @@ namespace Parasite
 
         private Texture2D _floorTexture;
 
-        private readonly Rectangle _screenBounds;
-
+        /// <summary>
+        /// Set-Up Settings (lol.)
+        /// </summary>
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            var screenScale = graphics.PreferredBackBufferHeight / 1080.0f;
+            _screenForm = Matrix.CreateScale(screenScale, screenScale, 1.0f); // No Z-axis
+
+            // Define screen boundaries based on scale
+            _screenBounds = new Rectangle(0, 0, (int)Math.Round(graphics.PreferredBackBufferWidth / screenScale), (int)Math.Round(graphics.PreferredBackBufferHeight / screenScale));
+
         }
 
         /// <summary>
@@ -41,7 +54,7 @@ namespace Parasite
         /// </summary>
         protected override void Initialize()
         {
-           
+
             base.Initialize();
         }
 
@@ -53,7 +66,7 @@ namespace Parasite
         {
             // Create a new SpriteBatch, which can be used to draw textures. 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-           
+
             // Load Textures Using Content Manager
             _northOpenWall = Content.Load<Texture2D>("north-open");
             _northClosedWall = Content.Load<Texture2D>("north-closed");
@@ -63,11 +76,10 @@ namespace Parasite
             _southClosedWall = Content.Load<Texture2D>("south-closed");
             _westOpenWall = Content.Load<Texture2D>("west-open");
             _westClosedWall = Content.Load<Texture2D>("west-closed");
-
             _floorTexture = Content.Load<Texture2D>("floor");
 
-            // Setup the map. 
-            _map = new Map(Environment.TickCount);  
+            // Setup the map 
+            _map = new Map(Environment.TickCount);
 
         }
 
@@ -97,12 +109,13 @@ namespace Parasite
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-
+            GraphicsDevice.Clear(Color.Black);
+            DrawRoom();
             base.Draw(gameTime);
         }
 
         /// <summary>
-        /// 
+        /// Draw Room
         /// </summary>
         private void DrawRoom()
         {
@@ -110,19 +123,21 @@ namespace Parasite
             var center = screen.Center.ToVector2();
             var room = _map.PlayerRoom;
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, null); // enable drawing of textures and whatnot within generated screen scale
 
             // Drawing the floor
             _spriteBatch.Draw(_floorTexture, center - new Vector2(_floorTexture.Width / 2, _floorTexture.Height / 2), Color.White);
 
             var wallDepth = _northClosedWall.Height;
             var roomHalfWidth = _northClosedWall.Width / 2.0f;
-            var roomHalfHeight = _eastClosedWall.Height / 2.0f; 
+            var roomHalfHeight = _eastClosedWall.Height / 2.0f;
 
             // Drawing walls depending of player's room index
+
+            // North and South
             _spriteBatch.Draw(room.NorthRoom != -1 ? _northOpenWall : _northClosedWall, new Vector2(center.X - roomHalfWidth, center.Y - roomHalfHeight));
             _spriteBatch.Draw(room.SouthRoom != -1 ? _southOpenWall : _southClosedWall, new Vector2(center.X - roomHalfWidth, center.Y + roomHalfHeight - wallDepth));
-
+            // East and West
             _spriteBatch.Draw(room.EastRoom != -1 ? _eastOpenWall : _eastClosedWall, new Vector2(center.X + roomHalfWidth - wallDepth, center.Y - roomHalfHeight));
             _spriteBatch.Draw(room.WestRoom != -1 ? _westOpenWall : _westClosedWall, new Vector2(center.X - roomHalfWidth, center.Y - roomHalfHeight));
 
