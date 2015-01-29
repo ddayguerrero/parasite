@@ -112,3 +112,9 @@
 /processorParam:TextureFormat=Color
 /build:west-open.png
 
+#begin HUDFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Color
+/build:HUDFont.spritefont
+

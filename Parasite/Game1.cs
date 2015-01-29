@@ -9,11 +9,11 @@ namespace Parasite
     /// </summary>
     public class Game1 : Game
     {
-        private Map _map;
-
         GraphicsDeviceManager graphics;
         SpriteBatch _spriteBatch;
 
+        private Map _map;
+        private SpriteFont _gameFont;
         // Device Scaling Variables
         private readonly Rectangle _screenBounds;
         private readonly Matrix _screenForm;
@@ -78,6 +78,7 @@ namespace Parasite
             _westClosedWall = Content.Load<Texture2D>("west-closed");
             _floorTexture = Content.Load<Texture2D>("floor");
 
+            _gameFont = Content.Load<SpriteFont>("HUDfont");
             // Setup the map 
             _map = new Map(Environment.TickCount);
 
@@ -111,7 +112,20 @@ namespace Parasite
         {
             GraphicsDevice.Clear(Color.Black);
             DrawRoom();
+            DrawPlayerHud();
             base.Draw(gameTime);
+        }
+
+        private void DrawPlayerHud()
+        {
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm);
+
+            var room = _map.PlayerRoom;
+
+            var roomDescription = string.Format("Room: {0}", room.Index + 1);
+            _spriteBatch.DrawString(_gameFont, roomDescription, new Vector2(20, 10), Color.WhiteSmoke);
+
+            _spriteBatch.End();
         }
 
         /// <summary>
@@ -123,7 +137,7 @@ namespace Parasite
             var center = screen.Center.ToVector2();
             var room = _map.PlayerRoom;
 
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, null); // enable drawing of textures and whatnot within generated screen scale
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm); // enable drawing of textures and whatnot within generated screen scale
 
             // Drawing the floor
             _spriteBatch.Draw(_floorTexture, center - new Vector2(_floorTexture.Width / 2, _floorTexture.Height / 2), Color.White);
