@@ -116,6 +116,9 @@ namespace Parasite
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Draw HUD information
+        /// </summary>
         private void DrawPlayerHud()
         {
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm);
