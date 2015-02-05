@@ -27,7 +27,6 @@ namespace Parasite
         private Texture2D _southClosedWall;
         private Texture2D _westOpenWall;
         private Texture2D _westClosedWall;
-
         private Texture2D _floorTexture;
 
         /// <summary>
@@ -77,7 +76,6 @@ namespace Parasite
             _westOpenWall = Content.Load<Texture2D>("west-open");
             _westClosedWall = Content.Load<Texture2D>("west-closed");
             _floorTexture = Content.Load<Texture2D>("floor");
-
             _gameFont = Content.Load<SpriteFont>("HUDfont");
             // Setup the map 
             _map = new Map(Environment.TickCount);

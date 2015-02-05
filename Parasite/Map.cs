@@ -111,6 +111,10 @@ namespace Parasite
             }
         }
 
+        /// <summary>
+        /// Map the player movement across the map using the rooms and set designated room.
+        /// </summary>
+        /// 
         public void MovePlayerEast(OnPlayerMoved callback)
         {
             var room = PlayerRoom;
@@ -121,6 +125,10 @@ namespace Parasite
             }
         }
 
+        /// <summary>
+        /// Map the player movement across the map using the rooms and set designated room.
+        /// </summary>
+        /// 
         public void MovePlayerSouth(OnPlayerMoved callback)
         {
             var room = PlayerRoom;
@@ -131,6 +139,10 @@ namespace Parasite
             }
         }
 
+        /// <summary>
+        /// Map the player movement across the map using the rooms and set designated room.
+        /// </summary>
+        /// 
         public void MovePlayerWest(OnPlayerMoved callback)
         {
             var room = PlayerRoom;
