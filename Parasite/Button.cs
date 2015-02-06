@@ -24,11 +24,11 @@ namespace Parasite
         /// <summary>
         /// Check state of button (whether it is touched or not)
         /// </summary>
-        /// <param name="touches"></param>
+        /// <param name="screenTouches"></param>
         /// <returns></returns>
-        public bool WasPressed(ref TouchCollection touches)
+        public bool WasPressed(ref TouchCollection screenTouches)
         {
-            foreach (var touch in touches)
+            foreach (var touch in screenTouches)
             {
                 if (touch.Id == _lastTouchId)
                     continue;

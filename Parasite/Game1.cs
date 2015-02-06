@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System;
 using Microsoft.Xna.Framework.Input.Touch;
+
 namespace Parasite
 {
     /// <summary>
@@ -27,6 +28,12 @@ namespace Parasite
         private Texture2D buttonSouth;
         private Texture2D buttonWest;
 
+        private float _scrollPos; // Position
+        private int _scrollOutRoom = -1; // Room scrolling out
+        private int _scrollInRoom = -1; // Room scrolling in
+        private Vector2 _scrollInStart; // Start Position of Scroll
+        private Vector2 _scrollOutEnd; // End Position of Scroll
+
         // Device Scaling Variables
         private readonly Rectangle _screenBounds;
         private readonly Matrix _screenForm;
@@ -48,6 +55,7 @@ namespace Parasite
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
             Content.RootDirectory = "Content";
 
             var screenScale = graphics.PreferredBackBufferHeight / 1080.0f;
@@ -68,6 +76,10 @@ namespace Parasite
         {
 
             base.Initialize();
+
+            //Scale Touch Input according to display
+            TouchPanel.DisplayWidth = _screenBounds.Width;
+            TouchPanel.DisplayHeight = _screenBounds.Height;
         }
 
         /// <summary>
@@ -154,6 +166,24 @@ namespace Parasite
                 });
             }
 
+            // Animate the scroll 
+            _scrollPos = MathHelper.Clamp(_scrollPos + (float)gameTime.ElapsedGameTime.TotalSeconds * 2.0f, 0, 1);
+
+            // Scroll state
+            if (_scrollOutRoom != -1) // Still scrolling
+            {
+                if (_scrollPos == 1.0f) // Done scrolling
+                {
+                    _scrollOutRoom = -1;
+                    _scrollPos = 0; // Not scrolled in or out
+                }
+            }
+            else if (_scrollInRoom != -1)
+            {
+                if (_scrollPos == 1.0f)
+                    _scrollInRoom = -1; 
+            }
+ 
             // TODO: Add your update logic here
             base.Update(gameTime);
         }
@@ -180,14 +210,14 @@ namespace Parasite
             var room = _map.PlayerRoom;
 
             // Only draw the movement buttons if the scene is not animating.
-                if (room.NorthRoom != -1)
-                    _buttonN.Draw(_spriteBatch);
-                if (room.EastRoom != -1)
-                    _buttonE.Draw(_spriteBatch);
-                if (room.SouthRoom != -1)
-                    _buttonS.Draw(_spriteBatch);
-                if (room.WestRoom != -1)
-                    _buttonW.Draw(_spriteBatch);
+            if (room.NorthRoom != -1)
+                _buttonN.Draw(_spriteBatch);
+            if (room.EastRoom != -1)
+                _buttonE.Draw(_spriteBatch);
+            if (room.SouthRoom != -1)
+                _buttonS.Draw(_spriteBatch);
+            if (room.WestRoom != -1)
+                _buttonW.Draw(_spriteBatch);
 
             var roomDescription = string.Format("Room: {0}", room.Index + 1);
             _spriteBatch.DrawString(_gameFont, roomDescription, new Vector2(20, 10), Color.WhiteSmoke);
@@ -204,9 +234,22 @@ namespace Parasite
             var center = screen.Center.ToVector2();
             var room = _map.PlayerRoom;
 
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm); // enable drawing of textures and whatnot within generated screen scale
+            if (_scrollOutRoom != -1) // Scrolling out?
+            {
+                room = _map[_scrollOutRoom];
+                var offset = Vector2.Lerp(Vector2.Zero, _scrollOutEnd, _scrollPos);
+                center += offset; // Offset center point
+            }
+            else if (_scrollInRoom != -1) // Scrolling in?
+            {
+                room = _map[_scrollInRoom];
+                var offset = Vector2.Lerp(_scrollInStart, Vector2.Zero, _scrollPos);
+                center += offset; // Offset center point
+            }
 
-            // Drawing the floor
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm); // Enable drawing of textures and whatnot within generated screen scale
+
+            // Drawing the floor based on ground point center
             _spriteBatch.Draw(_floorTexture, center - new Vector2(_floorTexture.Width / 2, _floorTexture.Height / 2), Color.White);
 
             var wallDepth = _northClosedWall.Height;
