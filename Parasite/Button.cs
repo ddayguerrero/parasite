@@ -10,9 +10,9 @@ namespace Parasite
     /// </summary>
     class Button
     {
-        private Rectangle _location; // Touch point
+        private Rectangle _location; // Touch Point
         private readonly Texture2D _pressTex;
-        private int _lastTouchId;
+        private int _lastTouchId; // Last Screen Touch
         private bool _isPressed;
 
         public Button(Texture2D pressTex, int posX, int posY)
@@ -42,7 +42,9 @@ namespace Parasite
                     return true;
                 }
             }
+
             _isPressed = false;
+
             return _isPressed;
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System;
+using Microsoft.Xna.Framework.Input.Touch;
 namespace Parasite
 {
     /// <summary>
@@ -14,6 +15,18 @@ namespace Parasite
 
         private Map _map;
         private SpriteFont _gameFont;
+
+        // HUD Controls - Buttons
+        private Button _buttonN;
+        private Button _buttonE;
+        private Button _buttonS;
+        private Button _buttonW;
+
+        private Texture2D buttonNorth;
+        private Texture2D buttonEast;
+        private Texture2D buttonSouth;
+        private Texture2D buttonWest;
+
         // Device Scaling Variables
         private readonly Rectangle _screenBounds;
         private readonly Matrix _screenForm;
@@ -77,6 +90,17 @@ namespace Parasite
             _westClosedWall = Content.Load<Texture2D>("west-closed");
             _floorTexture = Content.Load<Texture2D>("floor");
             _gameFont = Content.Load<SpriteFont>("HUDfont");
+
+            buttonNorth = Content.Load<Texture2D>("ui/north");
+            buttonEast = Content.Load<Texture2D>("ui/east");
+            buttonSouth = Content.Load<Texture2D>("ui/south");
+            buttonWest = Content.Load<Texture2D>("ui/west");
+
+            _buttonN = new Button(buttonNorth, _screenBounds.Center.X - (buttonNorth.Width / 2), 0);
+            _buttonE = new Button(buttonEast, _screenBounds.Center.X + (_northClosedWall.Width / 2) - buttonEast.Width, _screenBounds.Center.Y - (buttonNorth.Height / 2));
+            _buttonS = new Button(buttonSouth, _screenBounds.Center.X - (buttonSouth.Width / 2), _screenBounds.Bottom - buttonSouth.Height);
+            _buttonW = new Button(buttonWest, _screenBounds.Center.X - (_northClosedWall.Width / 2), _screenBounds.Center.Y - (buttonWest.Height / 2));
+
             // Setup the map 
             _map = new Map(Environment.TickCount);
 
@@ -97,7 +121,39 @@ namespace Parasite
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {
+        {           
+            var touchState = TouchPanel.GetState(); // Get Touch State
+
+            // Check which button was called
+            if (_buttonN.WasPressed(ref touchState))
+            {
+                _map.MovePlayerNorth((curr, next) =>
+                {
+
+                });
+            }
+            else if (_buttonE.WasPressed(ref touchState))
+            {
+                _map.MovePlayerEast((curr, next) =>
+                {
+
+                });
+            }
+            else if (_buttonS.WasPressed(ref touchState))
+            {
+                _map.MovePlayerSouth((curr, next) =>
+                {
+
+                });
+            }
+            else if (_buttonW.WasPressed(ref touchState))
+            {
+                _map.MovePlayerWest((curr, next) =>
+                {
+
+                });
+            }
+
             // TODO: Add your update logic here
             base.Update(gameTime);
         }
@@ -122,6 +178,16 @@ namespace Parasite
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _screenForm);
 
             var room = _map.PlayerRoom;
+
+            // Only draw the movement buttons if the scene is not animating.
+                if (room.NorthRoom != -1)
+                    _buttonN.Draw(_spriteBatch);
+                if (room.EastRoom != -1)
+                    _buttonE.Draw(_spriteBatch);
+                if (room.SouthRoom != -1)
+                    _buttonS.Draw(_spriteBatch);
+                if (room.WestRoom != -1)
+                    _buttonW.Draw(_spriteBatch);
 
             var roomDescription = string.Format("Room: {0}", room.Index + 1);
             _spriteBatch.DrawString(_gameFont, roomDescription, new Vector2(20, 10), Color.WhiteSmoke);
