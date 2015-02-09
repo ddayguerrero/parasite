@@ -52,9 +52,9 @@ namespace Parasite
         /// Draw
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(DrawState state)
         {
-            spriteBatch.Draw(_pressTex, _location, _isPressed ? Color.DarkGray : Color.White);
+            state.SpriteBatch.Draw(_pressTex, _location, _isPressed ? Color.DarkGray : Color.White);
         }
     }
 }

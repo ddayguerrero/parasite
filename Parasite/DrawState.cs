@@ -14,6 +14,7 @@ namespace Parasite
     class DrawState
     {
         public readonly Rectangle ScreenBoundaries;
+        // Device Scaling Variables
         public readonly SpriteBatch SpriteBatch;
         public readonly Matrix ScreenXform;
 
