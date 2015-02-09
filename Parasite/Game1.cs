@@ -22,7 +22,6 @@ namespace Parasite
         private Button _buttonE;
         private Button _buttonS;
         private Button _buttonW;
-
         private Texture2D buttonNorth;
         private Texture2D buttonEast;
         private Texture2D buttonSouth;
@@ -49,6 +48,8 @@ namespace Parasite
         private Texture2D _westClosedWall;
         private Texture2D _floorTexture;
 
+        private DrawState _drawState;
+
         /// <summary>
         /// Set-Up Settings (lol.)
         /// </summary>
@@ -57,12 +58,6 @@ namespace Parasite
             graphics = new GraphicsDeviceManager(this);
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
             Content.RootDirectory = "Content";
-
-            var screenScale = graphics.PreferredBackBufferHeight / 1080.0f;
-            _screenForm = Matrix.CreateScale(screenScale, screenScale, 1.0f); // No Z-axis
-
-            // Define screen boundaries based on scale
-            _screenBounds = new Rectangle(0, 0, (int)Math.Round(graphics.PreferredBackBufferWidth / screenScale), (int)Math.Round(graphics.PreferredBackBufferHeight / screenScale));
 
         }
 
@@ -77,7 +72,7 @@ namespace Parasite
 
             base.Initialize();
 
-            //Scale Touch Input according to display
+            // Scale Touch Input according to display
             TouchPanel.DisplayWidth = _screenBounds.Width;
             TouchPanel.DisplayHeight = _screenBounds.Height;
         }
@@ -87,9 +82,8 @@ namespace Parasite
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures. 
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+        {            
+            _drawState = new DrawState(GraphicsDevice);
 
             // Load Textures Using Content Manager
             _northOpenWall = Content.Load<Texture2D>("north-open");
@@ -141,35 +135,51 @@ namespace Parasite
             {
                 _map.MovePlayerNorth((curr, next) =>
                 {
-
+                    _scrollPos = 0; // Reset Scroll Position
+                    _scrollOutRoom = curr; // Scrolling out current room
+                    _scrollOutEnd = new Vector2(0, 1080); // Bottom
+                    _scrollInRoom = next; // Scrolling into next room
+                    _scrollInStart = new Vector2(0, -1080); // Top
                 });
             }
             else if (_buttonE.WasPressed(ref touchState))
             {
                 _map.MovePlayerEast((curr, next) =>
                 {
-
+                    _scrollPos = 0; // Reset Scroll Position
+                    _scrollOutRoom = curr; // Scrolling out current room
+                    _scrollOutEnd = new Vector2(-1920, 0); // Left
+                    _scrollInRoom = next;
+                    _scrollInStart = new Vector2(1920, 0); // Right
                 });
             }
             else if (_buttonS.WasPressed(ref touchState))
             {
                 _map.MovePlayerSouth((curr, next) =>
                 {
-
+                    _scrollPos = 0; // Reset Scroll Position
+                    _scrollOutRoom = curr; // Scrolling out current room
+                    _scrollOutEnd = new Vector2(0, -1080); // Top
+                    _scrollInRoom = next; // Scrolling into next room
+                    _scrollInStart = new Vector2(0, 1080); // Bottom
                 });
             }
             else if (_buttonW.WasPressed(ref touchState))
             {
                 _map.MovePlayerWest((curr, next) =>
                 {
-
+                    _scrollPos = 0; // Reset Scroll Position
+                    _scrollOutRoom = curr; // Scrolling out current room
+                    _scrollOutEnd = new Vector2(1920, 0); // Right
+                    _scrollInRoom = next; // Scrolling into next room
+                    _scrollInStart = new Vector2(-1920, 0); // Left
                 });
             }
 
             // Animate the scroll 
             _scrollPos = MathHelper.Clamp(_scrollPos + (float)gameTime.ElapsedGameTime.TotalSeconds * 2.0f, 0, 1);
 
-            // Scroll state
+            // Cycle between scrolling in and out
             if (_scrollOutRoom != -1) // Still scrolling
             {
                 if (_scrollPos == 1.0f) // Done scrolling
@@ -209,15 +219,18 @@ namespace Parasite
 
             var room = _map.PlayerRoom;
 
-            // Only draw the movement buttons if the scene is not animating.
-            if (room.NorthRoom != -1)
-                _buttonN.Draw(_spriteBatch);
-            if (room.EastRoom != -1)
-                _buttonE.Draw(_spriteBatch);
-            if (room.SouthRoom != -1)
-                _buttonS.Draw(_spriteBatch);
-            if (room.WestRoom != -1)
-                _buttonW.Draw(_spriteBatch);
+            // Draw the movement buttons
+            if (_scrollInRoom == -1 && _scrollOutRoom == -1)
+            {
+                if (room.NorthRoom != -1)
+                    _buttonN.Draw(_spriteBatch);
+                if (room.EastRoom != -1)
+                    _buttonE.Draw(_spriteBatch);
+                if (room.SouthRoom != -1)
+                    _buttonS.Draw(_spriteBatch);
+                if (room.WestRoom != -1)
+                    _buttonW.Draw(_spriteBatch);
+            }
 
             var roomDescription = string.Format("Room: {0}", room.Index + 1);
             _spriteBatch.DrawString(_gameFont, roomDescription, new Vector2(20, 10), Color.WhiteSmoke);

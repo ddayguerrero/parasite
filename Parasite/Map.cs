@@ -65,7 +65,7 @@ namespace Parasite
                 var north = i < Columns ? -1 : i - Columns;
                 var east = ((i + 1) % Columns) == 0 ? -1 : i + 1;
                 var south = i >= lastRow ? -1 : i + Columns;
-                var west = (i % Columns) == 0 ? -1 : i + 1;
+                var west = (i % Columns) == 0 ? -1 : i - 1;
                 var room = new Room(i, north, east, south, west);
                 _rooms[i] = room;
             }
