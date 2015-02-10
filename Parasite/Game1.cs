@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using System;
-using Microsoft.Xna.Framework.Input.Touch;
+﻿﻿using Windows.Phone.UI.Input; 
+using Microsoft.Xna.Framework; 
+using Microsoft.Xna.Framework.Input.Touch; 
+using Microsoft.Xna.Framework.Media; 
+using Windows.UI.Popups; 
+
 
 namespace Parasite
 {
@@ -25,6 +26,35 @@ namespace Parasite
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
             Content.RootDirectory = "Content";
 
+            HardwareButtons.BackPressed += OnBackButton;
+        }
+
+        /// <summary>
+        /// On Back Button Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBackButton(object sender, BackPressedEventArgs e)
+        {
+            if(_gameScreen == null)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+
+                var dlg = new MessageDialog("Are you sure you want to quit the game?", "Quit?");
+                dlg.Commands.Add(new UICommand("Yes", command =>
+                {
+                    _gameScreen.Cleanup();
+                    _gameScreen = null;
+                }));
+
+                dlg.Commands.Add(new UICommand("No"));
+                dlg.CancelCommandIndex = 1;
+                dlg.ShowAsync();
+            }
         }
 
         /// <summary>
