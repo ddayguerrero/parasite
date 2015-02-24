@@ -13,9 +13,14 @@ namespace Parasite
         public event Action OnStart;
 
         private readonly Button _startButton;
+        private readonly Texture2D _backgroundTex;
+        private readonly Texture2D _titleTex;
 
         public MenuScreen(ContentManager content, Rectangle screenBoundaries)
         {
+            _backgroundTex = content.Load<Texture2D>("ui/title_screen");
+            _titleTex = content.Load<Texture2D>("ui/title_text");
+
             var center = screenBoundaries.Center;
         }
 
