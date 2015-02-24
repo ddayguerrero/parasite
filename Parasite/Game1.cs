@@ -81,10 +81,20 @@ namespace Parasite
         {            
             _drawState = new DrawState(GraphicsDevice);
 
-           
+            _menuScreen = new MenuScreen(Content, _drawState.ScreenBoundaries);
+            _menuScreen.OnStart += OnGameStart;
 
         }
 
+        protected void OnGameStart()
+        {
+            _gameScreen = new GameScreen(Content, _drawState.ScreenBoundaries);
+            _gameScreen.OnGameOver += () =>
+            {
+                _gameScreen.Cleanup();
+                _gameScreen = null;
+            };
+        }
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
