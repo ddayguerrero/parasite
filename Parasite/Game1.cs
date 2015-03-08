@@ -44,7 +44,7 @@ namespace Parasite
             {
                 e.Handled = true;
 
-                var dlg = new MessageDialog("Are you sure you want to quit the game?", "Quit?");
+                var dlg = new MessageDialog("Are you sure you want to quit?", "Quit?");
                 dlg.Commands.Add(new UICommand("Yes", command =>
                 {
                     _gameScreen.Cleanup();

@@ -152,5 +152,27 @@ namespace Parasite
                 PlayerRoomIndex = room.WestRoom;
             }
         }
+
+        /// <summary>
+        /// Sense 1: Check nearby rooms for alien traps.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public bool IsNearTrap(int index)
+        {
+            var room = _rooms[index];
+
+            if ((room.NorthRoom != -1 && _rooms[room.NorthRoom].HasTrap) || 
+                (room.EastRoom != -1 && _rooms[room.EastRoom].HasTrap) || 
+                (room.SouthRoom != -1 && _rooms[room.SouthRoom].HasTrap) || 
+                (room.WestRoom != -1 && _rooms[room.WestRoom].HasTrap))
+            {
+                return true;
+            }
+            else{
+                return false;
+            }          
+        }
+
     }
 }

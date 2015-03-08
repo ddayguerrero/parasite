@@ -14,9 +14,9 @@ namespace Parasite
    static class Util
     {
        // Calcalte midpoints of texture's dimensions
-       static public Vector2 GetHalfSize(this Texture2D text)
+       static public Vector2 GetHalfSize(this Texture2D texture)
        {
-           return new Vector2(text.Width / 2.0f, text.Height / 2.0f);
+           return new Vector2(texture.Width / 2.0f, texture.Height / 2.0f);
        }
 
        // Ease Effect
