@@ -95,6 +95,7 @@ namespace Parasite
                 _gameScreen = null;
             };
         }
+
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.

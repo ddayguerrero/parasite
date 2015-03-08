@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,13 @@ namespace Parasite
     /// </summary>
    static class Util
     {
+       // Calcalte midpoints of texture's dimensions
+       static public Vector2 GetHalfSize(this Texture2D text)
+       {
+           return new Vector2(text.Width / 2.0f, text.Height / 2.0f);
+       }
+
+       // Ease Effect
        static public float EaseInOut(float step)
        {
            if (step < 0.5)
