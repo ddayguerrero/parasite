@@ -174,21 +174,21 @@ namespace Parasite
             }          
         }
 
-        /// <summary>
-        /// Sense 2: Check nearby rooms for alien.
-        /// </summary>
-        /// <param name="index">Room Position</param>
-        /// <returns> True if trap is nearby, false otherwise. </returns>
-        //public bool IsNearAlien(int index)
-        //{
-        //var room = _rooms[index];
+         //<summary>
+         //Sense 2: Check nearby rooms for alien.
+         //</summary>
+         //<param name="index">Room Position</param>
+         //<returns> True if trap is nearby, false otherwise. </returns>
+        public bool IsNearAlien(int index)
+        {
+        var room = _rooms[index];
 
-        //if (room.northroom == alienroom ||
-        //    room.eastroom == alienroom ||
-        //    room.southroom == alienroom ||
-        //    room.westroom == alienroom)
-        //    return true; 
+        //if (room.NorthRoom == alienRoom ||
+        //    room.EastRoom == alienroom ||
+        //    room.SouthRoom == alienroom ||
+        //    room.WestRoom == alienroom)
+            return true; 
 
-        //}
+        }
     }
 }
